@@ -1,34 +1,31 @@
 int interrupt_pin = 3;
+int led_pin=6;
 unsigned long duration;
 unsigned long freq;
 
 
 void setup()
 {
-TCCR0B = TCCR0B & B11111000 | B00000010;//frekansı değiştiriyor
+//TCCR0B = TCCR0B & B11111000 | B00000010;
   Serial.begin(9600);
   pinMode(interrupt_pin, INPUT_PULLUP);
   pinMode(5,OUTPUT);
 attachInterrupt(digitalPinToInterrupt(3), frq, FALLING);
-attachInterrupt(digitalPinToInterrupt(3), frq2, HIGH);
+
 }
 
 
 void loop()
 {
      analogWrite(5,127);
+     if(freq<1100&&freq>900)
+     digitalWrite(led_pin,HIGH);
+
+  
 }
 void frq()
 {
-duration=millis();
-}
-void frq2()
-{
-Serial.println(millis()-duration);
-}
-void printfreq()
-{
-  Serial.print(pulseIn(5,LOW));
-     Serial.print("   ");
-     Serial.println(pulseIn(5,HIGH));
+  freq=1000000/(micros()-duration);
+duration=micros();
+
 }
