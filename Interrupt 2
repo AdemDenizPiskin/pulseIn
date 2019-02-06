@@ -1,0 +1,45 @@
+int interrupt_pin = 3;
+int led_pin=8;
+unsigned long time_falling,duration_low,duration_high,time_rising,total_time;
+unsigned long freq;
+
+
+void setup()
+{
+//TCCR0B = TCCR0B & B11111000 | B00000010;
+  Serial.begin(9600);
+  pinMode(interrupt_pin, INPUT_PULLUP);
+  pinMode(5,OUTPUT);
+  pinMode(8,OUTPUT);
+  pinMode(9,OUTPUT);
+  pinMode(10,OUTPUT);
+attachInterrupt(digitalPinToInterrupt(3), frq, FALLING);
+
+}
+
+
+void loop()
+{
+analogWrite(5,127);
+Serial.println(freq);
+}
+void frq()
+{
+ 
+time_falling=micros();
+detachInterrupt(digitalPinToInterrupt(3));
+attachInterrupt(digitalPinToInterrupt(3), frq2, RISING);
+}
+void frq2(){
+  duration_low=(micros()-time_falling);
+  time_rising=micros();
+  detachInterrupt(digitalPinToInterrupt(3));
+attachInterrupt(digitalPinToInterrupt(3), frq3, FALLING);
+}
+void frq3()
+{
+  duration_high=micros()-time_rising;
+  total_time=duration_low+duration_high;
+  freq=1000000/total_time;
+ frq();
+}
